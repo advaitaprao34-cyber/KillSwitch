@@ -1,0 +1,287 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+.ks-ob{font-family:var(--font-sans);background:#0f0f0f;border-radius:16px;overflow:hidden;min-height:560px;}
+.ob-header{background:#0f0f0f;padding:16px 24px;display:flex;align-items:center;gap:10px;border-bottom:1px solid #1a1a1a;}
+.ob-logo-icon{width:28px;height:28px;background:#E24B4A;border-radius:7px;display:flex;align-items:center;justify-content:center;}
+.ob-logo-icon i{color:#fff;font-size:15px;}
+.ob-logo-text{color:#fff;font-weight:500;font-size:15px;}
+.ob-steps{display:flex;align-items:center;gap:0;margin-left:auto;}
+.ob-step{display:flex;align-items:center;gap:6px;font-size:11px;color:#444;padding:4px 10px;}
+.ob-step.active{color:#E24B4A;}
+.ob-step.done{color:#97C459;}
+.ob-step-num{width:18px;height:18px;border-radius:50%;border:1px solid currentColor;display:flex;align-items:center;justify-content:center;font-size:10px;flex-shrink:0;}
+.ob-step-div{width:20px;height:1px;background:#222;}
+.ob-body{padding:28px 28px 20px;}
+.ob-screen{display:none;}
+.ob-screen.active{display:block;}
+
+.ob-title{color:#fff;font-size:20px;font-weight:500;margin-bottom:6px;}
+.ob-sub{color:#666;font-size:13px;line-height:1.6;margin-bottom:24px;}
+
+.method-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:24px;}
+.method-card{background:#161616;border:1px solid #222;border-radius:10px;padding:16px;cursor:pointer;transition:border-color 0.15s,background 0.15s;text-align:center;}
+.method-card:hover{border-color:#444;background:#1a1a1a;}
+.method-card.sel{border-color:#E24B4A88;background:#1a0a0a;}
+.method-icon{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;margin:0 auto 10px;font-size:20px;}
+.method-name{color:#ccc;font-size:13px;font-weight:500;margin-bottom:3px;}
+.method-desc{color:#555;font-size:11px;}
+
+.drop-zone{background:#111;border:1.5px dashed #2a2a2a;border-radius:12px;padding:32px 20px;text-align:center;cursor:pointer;transition:border-color 0.15s;margin-bottom:16px;}
+.drop-zone:hover,.drop-zone.drag{border-color:#E24B4A66;background:#1a0a0a;}
+.drop-icon{color:#444;font-size:32px;margin-bottom:10px;}
+.drop-title{color:#aaa;font-size:14px;font-weight:500;margin-bottom:4px;}
+.drop-hint{color:#555;font-size:12px;}
+.drop-formats{display:flex;gap:6px;justify-content:center;margin-top:12px;}
+.fmt-pill{background:#1e1e1e;border:0.5px solid #333;color:#666;font-size:11px;padding:3px 10px;border-radius:20px;}
+
+.sms-info{background:#111;border:0.5px solid #222;border-radius:10px;padding:16px;margin-bottom:16px;}
+.sms-step{display:flex;align-items:flex-start;gap:12px;padding:8px 0;border-bottom:0.5px solid #1a1a1a;}
+.sms-step:last-child{border-bottom:none;}
+.sms-num{width:22px;height:22px;border-radius:50%;background:#E24B4A1a;border:1px solid #E24B4A44;color:#E24B4A;font-size:11px;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;}
+.sms-text{color:#888;font-size:13px;line-height:1.5;}
+.sms-text b{color:#bbb;font-weight:500;}
+
+.trust-row{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap;}
+.trust-chip{display:flex;align-items:center;gap:5px;background:#111;border:0.5px solid #222;border-radius:20px;padding:5px 10px;font-size:11px;color:#666;}
+.trust-chip i{color:#97C459;font-size:13px;}
+
+.ob-btn{width:100%;background:#E24B4A;color:#fff;border:none;padding:13px;border-radius:8px;font-size:14px;font-weight:500;cursor:pointer;transition:background 0.15s;display:flex;align-items:center;justify-content:center;gap:8px;}
+.ob-btn:hover{background:#c23a39;}
+.ob-btn.secondary{background:transparent;border:1px solid #2a2a2a;color:#888;margin-top:8px;}
+.ob-btn.secondary:hover{background:#1a1a1a;color:#aaa;}
+
+.scanning-anim{text-align:center;padding:20px 0;}
+.scan-ring{width:80px;height:80px;border:3px solid #1a1a1a;border-top-color:#E24B4A;border-radius:50%;margin:0 auto 16px;animation:spin 1s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.scan-label{color:#888;font-size:13px;margin-bottom:20px;}
+.scan-found{display:flex;flex-direction:column;gap:6px;}
+.scan-item{background:#111;border:0.5px solid #1e1e1e;border-radius:8px;padding:10px 14px;display:flex;align-items:center;gap:10px;opacity:0;animation:fadein 0.4s forwards;}
+@keyframes fadein{to{opacity:1;}}
+.scan-item-dot{width:8px;height:8px;border-radius:50%;background:#E24B4A;flex-shrink:0;}
+.scan-item-name{color:#aaa;font-size:13px;flex:1;}
+.scan-item-amt{color:#E24B4A;font-size:13px;font-weight:500;}
+</style>
+
+<div class="ks-ob" id="ob-app">
+  <div class="ob-header">
+    <div class="ob-logo-icon"><i class="ti ti-bolt" aria-hidden="true"></i></div>
+    <span class="ob-logo-text">KillSwitch</span>
+    <div class="ob-steps">
+      <div class="ob-step active" id="step1-ind"><div class="ob-step-num">1</div>Connect</div>
+      <div class="ob-step-div"></div>
+      <div class="ob-step" id="step2-ind"><div class="ob-step-num">2</div>Scan</div>
+      <div class="ob-step-div"></div>
+      <div class="ob-step" id="step3-ind"><div class="ob-step-num">3</div>Kill</div>
+    </div>
+  </div>
+
+  <div class="ob-body">
+
+    <div class="ob-screen active" id="screen-1">
+      <div class="ob-title">How do you want to connect?</div>
+      <div class="ob-sub">We detect recurring payments from your data. Nothing is stored on our servers — all parsing happens on-device.</div>
+      <div class="method-grid">
+        <div class="method-card sel" onclick="selectMethod(this,'sms')">
+          <div class="method-icon" style="background:#E24B4A1a;"><i class="ti ti-message" style="color:#E24B4A;" aria-hidden="true"></i></div>
+          <div class="method-name">SMS inbox</div>
+          <div class="method-desc">Auto-read bank alerts</div>
+        </div>
+        <div class="method-card" onclick="selectMethod(this,'pdf')">
+          <div class="method-icon" style="background:#EF9F271a;"><i class="ti ti-file-text" style="color:#EF9F27;" aria-hidden="true"></i></div>
+          <div class="method-name">Bank statement</div>
+          <div class="method-desc">Upload PDF or CSV</div>
+        </div>
+        <div class="method-card" onclick="selectMethod(this,'email')">
+          <div class="method-icon" style="background:#97C4591a;"><i class="ti ti-mail" style="color:#97C459;" aria-hidden="true"></i></div>
+          <div class="method-name">Email receipts</div>
+          <div class="method-desc">Scan billing emails</div>
+        </div>
+      </div>
+
+      <div id="method-sms">
+        <div class="sms-info">
+          <div class="sms-step">
+            <div class="sms-num">1</div>
+            <div class="sms-text">Grant <b>read-only SMS access</b> when prompted — we only read bank OTP and debit messages.</div>
+          </div>
+          <div class="sms-step">
+            <div class="sms-num">2</div>
+            <div class="sms-text">Our parser scans for keywords like <b>debited, charged, subscription</b> — all on your device.</div>
+          </div>
+          <div class="sms-step">
+            <div class="sms-num">3</div>
+            <div class="sms-text">Results are shown instantly. <b>Nothing leaves your phone.</b></div>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-pdf" style="display:none;">
+        <div class="drop-zone" id="drop" ondragover="this.classList.add('drag')" ondragleave="this.classList.remove('drag')">
+          <div class="drop-icon"><i class="ti ti-upload" aria-hidden="true"></i></div>
+          <div class="drop-title">Drop your bank statement here</div>
+          <div class="drop-hint">or click to browse files</div>
+          <div class="drop-formats">
+            <span class="fmt-pill">PDF</span>
+            <span class="fmt-pill">CSV</span>
+            <span class="fmt-pill">XLS</span>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-email" style="display:none;">
+        <div class="sms-info">
+          <div class="sms-step">
+            <div class="sms-num">1</div>
+            <div class="sms-text">Connect your Gmail or Outlook with <b>read-only scope</b> — we request no send/write permissions.</div>
+          </div>
+          <div class="sms-step">
+            <div class="sms-num">2</div>
+            <div class="sms-text">We scan for emails from known billing senders: <b>Stripe, Razorpay, PayPal, Netflix</b> etc.</div>
+          </div>
+          <div class="sms-step">
+            <div class="sms-num">3</div>
+            <div class="sms-text">Receipts are parsed locally and deleted from memory after detection.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="trust-row">
+        <div class="trust-chip"><i class="ti ti-shield-check" aria-hidden="true"></i>On-device only</div>
+        <div class="trust-chip"><i class="ti ti-eye-off" aria-hidden="true"></i>No data stored</div>
+        <div class="trust-chip"><i class="ti ti-lock" aria-hidden="true"></i>Read-only access</div>
+        <div class="trust-chip"><i class="ti ti-x" aria-hidden="true"></i>No bank login needed</div>
+      </div>
+
+      <button class="ob-btn" onclick="goScan()"><i class="ti ti-bolt" aria-hidden="true"></i> Start scanning</button>
+    </div>
+
+    <div class="ob-screen" id="screen-2">
+      <div class="ob-title">Scanning your transactions...</div>
+      <div class="ob-sub">Analysing 90 days of payment history.</div>
+      <div class="scanning-anim">
+        <div class="scan-ring" id="ring"></div>
+        <div class="scan-label" id="scan-label">Reading SMS messages...</div>
+        <div class="scan-found" id="scan-found"></div>
+      </div>
+    </div>
+
+    <div class="ob-screen" id="screen-3">
+      <div class="ob-title">Scan complete — 6 leaks found</div>
+      <div class="ob-sub">We detected ₹3,840/month in recurring charges. Here's what we found.</div>
+      <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:20px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;background:#161616;border:0.5px solid #222;border-radius:9px;padding:12px 14px;">
+          <div style="display:flex;align-items:center;gap:10px;">
+            <div style="width:8px;height:8px;border-radius:50%;background:#E24B4A;flex-shrink:0;"></div>
+            <span style="color:#bbb;font-size:13px;">LinkedIn Premium</span>
+            <span style="font-size:11px;background:#E24B4A1a;color:#E24B4A;padding:2px 8px;border-radius:20px;">Dead weight</span>
+          </div>
+          <span style="color:#E24B4A;font-size:13px;font-weight:500;">₹2,499/mo</span>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:space-between;background:#161616;border:0.5px solid #222;border-radius:9px;padding:12px 14px;">
+          <div style="display:flex;align-items:center;gap:10px;">
+            <div style="width:8px;height:8px;border-radius:50%;background:#E24B4A;flex-shrink:0;"></div>
+            <span style="color:#bbb;font-size:13px;">Notion Pro</span>
+            <span style="font-size:11px;background:#E24B4A1a;color:#E24B4A;padding:2px 8px;border-radius:20px;">Dead weight</span>
+          </div>
+          <span style="color:#E24B4A;font-size:13px;font-weight:500;">₹800/mo</span>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:space-between;background:#161616;border:0.5px solid #222;border-radius:9px;padding:12px 14px;">
+          <div style="display:flex;align-items:center;gap:10px;">
+            <div style="width:8px;height:8px;border-radius:50%;background:#E24B4A;flex-shrink:0;"></div>
+            <span style="color:#bbb;font-size:13px;">Netflix</span>
+            <span style="font-size:11px;background:#E24B4A1a;color:#E24B4A;padding:2px 8px;border-radius:20px;">Dead weight</span>
+          </div>
+          <span style="color:#E24B4A;font-size:13px;font-weight:500;">₹649/mo</span>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:space-between;background:#161616;border:0.5px solid #222;border-radius:9px;padding:12px 14px;">
+          <div style="display:flex;align-items:center;gap:10px;">
+            <div style="width:8px;height:8px;border-radius:50%;background:#EF9F27;flex-shrink:0;"></div>
+            <span style="color:#bbb;font-size:13px;">Canva Pro</span>
+            <span style="font-size:11px;background:#EF9F271a;color:#EF9F27;padding:2px 8px;border-radius:20px;">Low usage</span>
+          </div>
+          <span style="color:#EF9F27;font-size:13px;font-weight:500;">₹499/mo</span>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:space-between;background:#161616;border:0.5px solid #1e1e1e;border-radius:9px;padding:12px 14px;opacity:0.6;">
+          <div style="display:flex;align-items:center;gap:10px;">
+            <div style="width:8px;height:8px;border-radius:50%;background:#97C459;flex-shrink:0;"></div>
+            <span style="color:#bbb;font-size:13px;">YouTube Premium</span>
+            <span style="font-size:11px;background:#97C4591a;color:#97C459;padding:2px 8px;border-radius:20px;">Active</span>
+          </div>
+          <span style="color:#97C459;font-size:13px;font-weight:500;">₹189/mo</span>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:space-between;background:#161616;border:0.5px solid #1e1e1e;border-radius:9px;padding:12px 14px;opacity:0.6;">
+          <div style="display:flex;align-items:center;gap:10px;">
+            <div style="width:8px;height:8px;border-radius:50%;background:#97C459;flex-shrink:0;"></div>
+            <span style="color:#bbb;font-size:13px;">Spotify</span>
+            <span style="font-size:11px;background:#97C4591a;color:#97C459;padding:2px 8px;border-radius:20px;">Active</span>
+          </div>
+          <span style="color:#97C459;font-size:13px;font-weight:500;">₹119/mo</span>
+        </div>
+      </div>
+      <button class="ob-btn" onclick="sendPrompt('Show me how to kill the dead weight subscriptions in KillSwitch and what my annual savings would be.')"><i class="ti ti-bolt" aria-hidden="true"></i> Kill the dead weight — save ₹2,940/mo ↗</button>
+      <button class="ob-btn secondary" onclick="sendPrompt('What does the KillSwitch 30-day savings report look like after a user cancels their subscriptions?')">See what your 30-day report looks like ↗</button>
+    </div>
+
+  </div>
+</div>
+
+<script>
+function selectMethod(el, type) {
+  document.querySelectorAll('.method-card').forEach(c => c.classList.remove('sel'));
+  el.classList.add('sel');
+  document.getElementById('method-sms').style.display = type==='sms' ? 'block' : 'none';
+  document.getElementById('method-pdf').style.display = type==='pdf' ? 'block' : 'none';
+  document.getElementById('method-email').style.display = type==='email' ? 'block' : 'none';
+}
+
+function goScan() {
+  document.getElementById('screen-1').classList.remove('active');
+  document.getElementById('screen-2').classList.add('active');
+  document.getElementById('step1-ind').classList.remove('active');
+  document.getElementById('step1-ind').classList.add('done');
+  document.getElementById('step2-ind').classList.add('active');
+
+  const found = document.getElementById('scan-found');
+  const label = document.getElementById('scan-label');
+  const items = [
+    { name:'LinkedIn Premium', amt:'₹2,499' },
+    { name:'Notion Pro', amt:'₹800' },
+    { name:'Netflix', amt:'₹649' },
+    { name:'Canva Pro', amt:'₹499' },
+    { name:'YouTube Premium', amt:'₹189' },
+    { name:'Spotify', amt:'₹119' },
+  ];
+  const labels = ['Reading messages...','Detecting recurring patterns...','Matching known services...','Calculating usage scores...','Finalising report...'];
+  let li = 0, ii = 0;
+  const lt = setInterval(() => {
+    if (li < labels.length) { label.textContent = labels[li++]; }
+  }, 600);
+  const it = setInterval(() => {
+    if (ii < items.length) {
+      const d = document.createElement('div');
+      d.className = 'scan-item';
+      d.style.animationDelay = (ii * 0.1) + 's';
+      d.innerHTML = `<div class="scan-item-dot"></div><span class="scan-item-name">${items[ii].name}</span><span class="scan-item-amt">${items[ii].amt}/mo</span>`;
+      found.appendChild(d);
+      ii++;
+    } else {
+      clearInterval(it); clearInterval(lt);
+      setTimeout(() => {
+        document.getElementById('ring').style.animation = 'none';
+        document.getElementById('ring').style.borderColor = '#97C459';
+        document.getElementById('ring').style.borderTopColor = '#97C459';
+        label.style.color = '#97C459';
+        label.textContent = '6 subscriptions found';
+        setTimeout(() => {
+          document.getElementById('screen-2').classList.remove('active');
+          document.getElementById('screen-3').classList.add('active');
+          document.getElementById('step2-ind').classList.remove('active');
+          document.getElementById('step2-ind').classList.add('done');
+          document.getElementById('step3-ind').classList.add('active');
+        }, 800);
+      }, 400);
+    }
+  }, 500);
+}
+</script>
