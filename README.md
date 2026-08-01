@@ -1,4 +1,4 @@
-Project: KillSwitch by Advaita
+Project: KillSwitch by Advaita Prasad Rao
 Problem: “Subscription & Auto-Payment Blindness”
 What it is
 People are losing money every month because they:
